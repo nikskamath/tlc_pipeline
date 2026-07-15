@@ -2,8 +2,6 @@
 
 An **end-to-end, production-grade data engineering pipeline** for the NYC Taxi & Limousine Commission (TLC) dataset. Features real-time anomaly detection powered by Google's Gemini API, Snowflake data warehouse, and Tableau dashboards.
 
-**[📂 GitHub Repo](https://github.com/nikskamath/tlc_pipeline)** | **[💬 Discussions](https://github.com/nikskamath/tlc_pipeline/discussions)**
-
 ---
 
 ## 📋 **What This Project Does**
@@ -214,31 +212,3 @@ curl -X POST http://localhost:8000/anomaly/score \
 - **[snowflake/README.md](snowflake/README.md)** — Detailed Snowflake setup & troubleshooting
 - **[.github/workflows/](./github/workflows/)** — CI/CD workflow definitions
 ---
-
-## 🤝 **Contributing**
-
-Open issues or PRs! Areas for improvement:
-- [ ] Idempotent loading (MERGE by file hash)
-- [ ] Kafka real-time ingestion
-- [ ] Slack/Teams anomaly alerts
-- [ ] dbt Cloud integration
-- [ ] Additional Tableau templates
-
----
-
-## 📜 **License**
-
-MIT — Use, modify, and share freely.
-
----
-
-## 🎯 **Next Steps**
-
-1. **Clone & Configure** — Edit `.env` with your Snowflake + Gemini credentials
-2. **Build & Run** — `docker-compose up -d` and trigger the DAG
-3. **Tableau** — Contact repo owner for the Tableau setup guide to build dashboards
-4. **LinkedIn** — Contact repo owner for the ready-to-post article template
-
----
-
-**Built with ❤️ for data engineers. [⭐ Star this repo if you found it useful!](https://github.com/nikskamath/tlc_pipeline)**
