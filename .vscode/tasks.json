@@ -1,0 +1,55 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install deps (Snowflake)",
+      "type": "shell",
+      "command": "cd snowflake && python3 -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+    },
+    {
+      "label": "Install deps (Databricks)",
+      "type": "shell",
+      "command": "cd databricks && python3 -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt"
+    },
+    {
+      "label": "Verify versions (Snowflake)",
+      "type": "shell",
+      "command": "cd snowflake && source .venv/bin/activate && python scripts/verify_versions.py"
+    },
+    {
+      "label": "Verify versions (Databricks)",
+      "type": "shell",
+      "command": "cd databricks && source .venv/bin/activate && python scripts/verify_versions.py"
+    },
+    {
+      "label": "dbt run (Snowflake)",
+      "type": "shell",
+      "command": "cd snowflake/dbt && dbt run --profiles-dir ."
+    },
+    {
+      "label": "dbt test (Snowflake)",
+      "type": "shell",
+      "command": "cd snowflake/dbt && dbt test --profiles-dir ."
+    },
+    {
+      "label": "dbt run (Databricks)",
+      "type": "shell",
+      "command": "cd databricks/dbt && dbt run --profiles-dir ."
+    },
+    {
+      "label": "dbt test (Databricks)",
+      "type": "shell",
+      "command": "cd databricks/dbt && dbt test --profiles-dir ."
+    },
+    {
+      "label": "Start Airflow (Snowflake)",
+      "type": "shell",
+      "command": "cd snowflake && docker-compose up -d"
+    },
+    {
+      "label": "Start Airflow (Databricks)",
+      "type": "shell",
+      "command": "cd databricks && docker-compose up -d"
+    }
+  ]
+}

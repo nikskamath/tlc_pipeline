@@ -1,0 +1,92 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Load -> Snowflake (Jan 2024 + zones)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/snowflake/scripts/load_to_snowflake.py",
+      "args": ["--month", "2024-01", "--load-zones"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/snowflake",
+      "envFile": "${workspaceFolder}/snowflake/.env"
+    },
+    {
+      "name": "Load -> Snowflake (last available month)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/snowflake/scripts/load_to_snowflake.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/snowflake",
+      "envFile": "${workspaceFolder}/snowflake/.env"
+    },
+    {
+      "name": "Load -> Databricks (Jan 2024 + zones)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/databricks/scripts/load_to_databricks.py",
+      "args": ["--month", "2024-01", "--load-zones"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/databricks",
+      "envFile": "${workspaceFolder}/databricks/.env"
+    },
+    {
+      "name": "Verify versions -> Snowflake",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/snowflake/scripts/verify_versions.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/snowflake",
+      "envFile": "${workspaceFolder}/snowflake/.env"
+    },
+    {
+      "name": "Verify versions -> Databricks",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/databricks/scripts/verify_versions.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/databricks",
+      "envFile": "${workspaceFolder}/databricks/.env"
+    },
+    {
+      "name": "AI Agent -> Snowflake (dry run)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/snowflake/agent/pipeline_agent.py",
+      "args": ["--warehouse", "snowflake", "--month", "2024-02", "--dry-run"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/snowflake",
+      "envFile": "${workspaceFolder}/snowflake/.env"
+    },
+    {
+      "name": "AI Agent -> Databricks (dry run)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/databricks/agent/pipeline_agent.py",
+      "args": ["--warehouse", "databricks", "--month", "2024-02", "--dry-run"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/databricks",
+      "envFile": "${workspaceFolder}/databricks/.env"
+    },
+    {
+      "name": "Run pytest -> Snowflake",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests/", "-v"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/snowflake",
+      "envFile": "${workspaceFolder}/snowflake/.env"
+    },
+    {
+      "name": "Run pytest -> Databricks",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests/", "-v"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/databricks",
+      "envFile": "${workspaceFolder}/databricks/.env"
+    }
+  ]
+}

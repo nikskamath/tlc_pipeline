@@ -1,0 +1,73 @@
+{
+  "name": "TLC Pipeline — Gmail Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tlc-pipeline-alert",
+        "responseMode": "onReceived",
+        "responseData": "allEntries"
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "tlc-pipeline-alert"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            { "value1": "={{ $json.status }}", "operation": "equals", "value2": "failure" }
+          ]
+        }
+      },
+      "id": "if-failure",
+      "name": "Is failure?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.ALERT_EMAIL }}",
+        "subject": "=❌ TLC Pipeline FAILED — {{ $json.dag_id }} ({{ $json.month }})",
+        "emailType": "html",
+        "message": "=<html><body style=\"font-family: Arial, sans-serif; max-width: 600px;\"><div style=\"background:#fee2e2;border-left:4px solid #ef4444;padding:16px;border-radius:4px;margin-bottom:16px;\"><h2 style=\"margin:0 0 8px;color:#991b1b;\">Pipeline Failure</h2><p style=\"margin:0;color:#7f1d1d;\">Your TLC data pipeline has failed.</p></div><table style=\"width:100%;border-collapse:collapse;\"><tr style=\"background:#f9fafb;\"><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;width:140px;\">DAG</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">{{ $json.dag_id }}</td></tr><tr><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;\">Month</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">{{ $json.month }}</td></tr><tr style=\"background:#f9fafb;\"><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;\">Run ID</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-size:12px;\">{{ $json.run_id }}</td></tr><tr><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;\">Time (UTC)</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">{{ $json.timestamp }}</td></tr></table><div style=\"background:#f3f4f6;padding:12px;border-radius:4px;margin-top:16px;\"><p style=\"margin:0 0 8px;font-weight:bold;\">Next steps:</p><ol style=\"margin:0;padding-left:20px;\"><li>Open Airflow: http://localhost:8080</li><li>Find DAG: {{ $json.dag_id }}</li><li>Check task logs for the failed step</li><li>Common cause: run verify_versions.py to check for dbt version drift</li></ol></div></body></html>",
+        "options": {}
+      },
+      "id": "gmail-failure",
+      "name": "Send failure email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [680, 200],
+      "credentials": { "gmailOAuth2": { "id": "gmail-creds", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.ALERT_EMAIL }}",
+        "subject": "=✅ TLC Pipeline SUCCESS — {{ $json.dag_id }} ({{ $json.month }})",
+        "emailType": "html",
+        "message": "=<html><body style=\"font-family: Arial, sans-serif; max-width: 600px;\"><div style=\"background:#dcfce7;border-left:4px solid #22c55e;padding:16px;border-radius:4px;margin-bottom:16px;\"><h2 style=\"margin:0 0 8px;color:#14532d;\">Pipeline Success</h2><p style=\"margin:0;color:#166534;\">Your TLC data pipeline completed successfully.</p></div><table style=\"width:100%;border-collapse:collapse;\"><tr style=\"background:#f9fafb;\"><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;width:140px;\">DAG</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">{{ $json.dag_id }}</td></tr><tr><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;\">Month loaded</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">{{ $json.month }}</td></tr><tr style=\"background:#f9fafb;\"><td style=\"padding:8px 12px;border:1px solid #e5e7eb;font-weight:bold;\">Completed at</td><td style=\"padding:8px 12px;border:1px solid #e5e7eb;\">{{ $json.timestamp }}</td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "gmail-success",
+      "name": "Send success email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [680, 400],
+      "credentials": { "gmailOAuth2": { "id": "gmail-creds", "name": "Gmail account" } }
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Is failure?", "type": "main", "index": 0 }]] },
+    "Is failure?": {
+      "main": [
+        [{ "node": "Send failure email", "type": "main", "index": 0 }],
+        [{ "node": "Send success email", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}

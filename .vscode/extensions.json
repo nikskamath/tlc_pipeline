@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.black-formatter",
+    "dbtLabsInc.dbt",
+    "ms-azuretools.vscode-docker",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "redhat.vscode-yaml",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "databricks.databricks"
+  ]
+}

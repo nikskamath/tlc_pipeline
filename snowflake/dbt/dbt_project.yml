@@ -1,0 +1,36 @@
+name: 'tlc_snowflake'
+version: '1.0.0'
+config-version: 2
+
+profile: 'tlc_snowflake'
+
+# ── PINS THE PROJECT TO dbt Fusion (2.0.0+) ────────────────
+# Signals this project targets Fusion, not dbt Core v1. If someone
+# opens it with dbt-core 1.x, they'll get a clear version warning
+# instead of confusing silent behaviour differences.
+require-dbt-version: [">=2.0.0", "<3.0.0"]
+
+model-paths:    ["models"]
+test-paths:     ["tests"]
+macro-paths:    ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path:    "target"
+clean-targets:  ["target", "dbt_packages"]
+
+models:
+  tlc_snowflake:
+    staging:
+      +schema: staging
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table
+    ai:
+      +schema: marts
+      +materialized: table
+
+vars:
+  min_fare:     0.5
+  max_fare:     500
+  max_distance: 100

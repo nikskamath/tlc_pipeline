@@ -1,0 +1,44 @@
+# ============================================================
+# PINNED VERSIONS — used identically in your local .venv, in
+# Dockerfile.airflow, and in .github/workflows/*.yml
+#
+# dbt itself is NOT in this file. dbt Fusion is a standalone Rust
+# binary, not a Python package — it is installed via the curl
+# script in Dockerfile.airflow / locally via the VS Code extension,
+# and pinned with `dbt system update --version <FUSION_VERSION>`.
+# See FUSION_VERSION.txt for the exact pinned build number.
+# ============================================================
+
+# ── Airflow ──────────────────────────────────────────────
+apache-airflow==2.9.3
+apache-airflow-providers-snowflake==5.7.0
+
+# ── Snowflake (used by the Python loader script, NOT by dbt —
+#    Fusion's Snowflake ADBC driver downloads itself automatically) ──
+snowflake-connector-python==3.12.2
+
+# ── AI Agent — LangChain + Gemini (free) ──────────────────
+langchain==0.2.16
+langchain-core==0.2.41
+langchain-google-genai==1.0.10
+
+# Uncomment to swap to Claude API:
+# langchain-anthropic==0.1.23
+# anthropic==0.34.2
+
+# Uncomment to swap to local Ollama:
+# langchain-ollama==0.1.3
+
+# ── Data / ML ────────────────────────────────────────────
+pandas==2.1.2
+pyarrow==17.0.0
+numpy==1.26.4
+requests==2.32.3
+
+# ── Dev tools ────────────────────────────────────────────
+python-dotenv==1.0.1
+black==24.8.0
+pytest==8.3.2
+pre-commit==3.8.0
+sqlfluff==3.1.0
+sqlfluff-templater-dbt==3.1.0

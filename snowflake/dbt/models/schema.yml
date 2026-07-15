@@ -1,0 +1,103 @@
+version: 2
+
+# ── Syntax confirmed for dbt Fusion (2.0.0-preview.190) ─────
+# Fusion requires generic test parameters nested under an
+# 'arguments:' key — this is the exact syntax Fusion enforces
+# more strictly than dbt Core did. data_tests: (not tests:) is
+# required in both engines as of 1.8+.
+
+sources:
+  - name: raw
+    database: TLC_DB
+    schema: RAW
+    description: "Raw tables loaded directly from TLC Parquet files via Airflow"
+    config:
+      freshness:
+        warn_after: {count: 49, period: hour}
+        error_after: {count: 73, period: hour}
+    tables:
+      - name: yellow_trips_raw
+        description: "Raw yellow taxi trip records from TLC public dataset"
+      - name: taxi_zone_lookup
+        description: "TLC LocationID to borough and zone name mapping"
+        columns:
+          - name: LOCATIONID
+            data_tests:
+              - unique
+              - not_null
+
+models:
+  - name: stg_yellow_trips
+    description: "Cleaned and typed yellow taxi trips from RAW layer"
+    columns:
+      - name: pickup_ts
+        # allow null pickup timestamps due to corrupted source data for some months
+      - name: dropoff_ts
+        # allow null dropoff timestamps due to corrupted source data for some months
+      - name: trip_duration_mins
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 180
+              config:
+                severity: warn
+      - name: fare_amount
+        data_tests:
+          - not_null
+      - name: trip_distance
+        data_tests:
+          - not_null
+      - name: payment_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6]
+
+  - name: dim_zones
+    description: "Zone dimension table with borough and neighbourhood"
+    columns:
+      - name: location_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: fct_trips
+    description: "Core fact table joining trips with zone names"
+    columns:
+      - name: pickup_ts
+        # allow null pickup_ts due to corrupted source data
+      - name: fare_amount
+        data_tests:
+          - not_null
+      - name: pickup_borough
+        data_tests:
+          - not_null
+
+  - name: fct_trips_incremental
+    description: "Incremental version of fct_trips — only processes new rows"
+    columns:
+      - name: pickup_ts
+        # allow null pickup_ts due to corrupted source data
+
+  - name: agg_daily_revenue
+    description: "Daily revenue and trip counts aggregated by borough"
+    columns:
+      - name: trip_date
+      - name: total_revenue
+        data_tests:
+          - not_null
+
+  - name: agg_hourly_demand
+    description: "Trip count by hour of day and borough"
+
+  - name: anomaly_flags
+    description: "Z-score based anomaly detection on fare, distance, and duration"
+    columns:
+      - name: pickup_ts
+        # allow null pickup_ts due to corrupted source data
+      - name: is_anomaly
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [true, false]

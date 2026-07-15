@@ -1,0 +1,25 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: detect-private-key
+
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: local
+    hooks:
+      - id: verify-dbt-versions
+        name: Verify dbt versions match pinned requirements
+        entry: bash -c 'for d in snowflake databricks; do if [ -d "$d" ]; then (cd "$d" && python scripts/verify_versions.py) || exit 1; fi; done'
+        language: system
+        pass_filenames: false
+        always_run: true

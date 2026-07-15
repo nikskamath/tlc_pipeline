@@ -1,0 +1,34 @@
+# ============================================================
+# Dockerfile.airflow — Databricks variant, dbt Fusion edition
+# Same mechanism as the Snowflake Dockerfile — see comments there.
+# ============================================================
+
+FROM apache/airflow:2.9.3-python3.11
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+USER airflow
+
+COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir --user -r /requirements.txt
+
+COPY FUSION_VERSION.txt /FUSION_VERSION.txt
+
+RUN curl -fsSL https://public.cdn.getdbt.com/fs/install/install.sh | sh -s -- --update \
+    && export PATH="$HOME/.local/bin:$PATH" \
+    && FUSION_VERSION=$(cat /FUSION_VERSION.txt) \
+    && dbt system update --version "$FUSION_VERSION" \
+    && dbt --version
+
+ENV PATH="/home/airflow/.local/bin:${PATH}"
+
+RUN FUSION_VERSION=$(cat /FUSION_VERSION.txt) \
+    && INSTALLED=$(dbt --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-preview\.[0-9]+)?' | head -1) \
+    && echo "Pinned: $FUSION_VERSION | Installed: $INSTALLED" \
+    && if [ "$INSTALLED" != "$FUSION_VERSION" ]; then \
+         echo "FUSION VERSION MISMATCH — build aborted" && exit 1; \
+       fi
+
+USER root

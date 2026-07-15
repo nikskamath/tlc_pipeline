@@ -1,0 +1,61 @@
+name: CD — deploy dbt models (Databricks, dbt Fusion)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'databricks/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: databricks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: databricks/requirements.txt
+
+      - name: Install pinned Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install and pin dbt Fusion
+        run: |
+          curl -fsSL https://public.cdn.getdbt.com/fs/install/install.sh | sh -s -- --update
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
+          FUSION_VERSION=$(cat FUSION_VERSION.txt)
+          dbt system update --version "$FUSION_VERSION"
+          python scripts/verify_versions.py
+
+      - name: dbt deps + run + test
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+          DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
+        run: |
+          cd dbt
+          dbt deps --profiles-dir .
+          dbt run --profiles-dir . --target prod
+          dbt test --profiles-dir . --target prod
+          dbt docs generate --profiles-dir . --target prod
+
+      - name: Notify via n8n (Gmail) on success
+        if: success()
+        run: |
+          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{"status":"success","dag_id":"github-actions-cd-databricks","month":"n/a","run_id":"${{ github.sha }}","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
+
+      - name: Notify via n8n (Gmail) on failure
+        if: failure()
+        run: |
+          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{"status":"failure","dag_id":"github-actions-cd-databricks","month":"n/a","run_id":"${{ github.sha }}","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}'
