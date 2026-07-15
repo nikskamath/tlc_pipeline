@@ -2,7 +2,7 @@
 
 An **end-to-end, production-grade data engineering pipeline** for the NYC Taxi & Limousine Commission (TLC) dataset. Features real-time anomaly detection powered by Google's Gemini API, Snowflake data warehouse, and Tableau dashboards.
 
-**[🔗 Full Article on LinkedIn](LINKEDIN_POST.md)** | **[📊 Tableau Setup Guide](TABLEAU_SETUP.md)** | **[📂 Repo](https://github.com/nikskamath/tlc_pipeline)**
+**[📂 GitHub Repo](https://github.com/nikskamath/tlc_pipeline)** | **[💬 Discussions](https://github.com/nikskamath/tlc_pipeline/discussions)**
 
 ---
 
@@ -94,7 +94,7 @@ EOF
 ```
 
 ### **5. Connect to Tableau (Optional)**
-See **[TABLEAU_SETUP.md](TABLEAU_SETUP.md)** for step-by-step guide.
+See the Tableau setup guide (contact repo owner for the detailed step-by-step guide).
 
 ---
 
@@ -119,8 +119,6 @@ tlc_pipeline/
 │   ├── docker-compose.yml          # Postgres + Airflow
 │   └── .env.example                # Template (add your creds)
 ├── databricks/                      # Alternative pipeline (Databricks)
-├── TABLEAU_SETUP.md                # Tableau connection guide
-├── LINKEDIN_POST.md                # Ready-to-post article
 └── README.md                       # This file
 ```
 
@@ -213,10 +211,9 @@ curl -X POST http://localhost:8000/anomaly/score \
 
 ## 📚 **Documentation**
 
-- **[TABLEAU_SETUP.md](TABLEAU_SETUP.md)** — Build Tableau dashboards
-- **[LINKEDIN_POST.md](LINKEDIN_POST.md)** — Ready-to-share article
-- **[snowflake/README.md](snowflake/README.md)** — Detailed Snowflake docs
-- **[.github/workflows/](./github/workflows/)** — CI/CD definitions
+- **[snowflake/README.md](snowflake/README.md)** — Detailed Snowflake setup & troubleshooting
+- **[.github/workflows/](./github/workflows/)** — CI/CD workflow definitions
+- **Tableau Setup & LinkedIn Article** — Contact the repo owner for these private guides
 
 ---
 
@@ -241,8 +238,8 @@ MIT — Use, modify, and share freely.
 
 1. **Clone & Configure** — Edit `.env` with your Snowflake + Gemini credentials
 2. **Build & Run** — `docker-compose up -d` and trigger the DAG
-3. **Tableau** — Follow [TABLEAU_SETUP.md](TABLEAU_SETUP.md) to build dashboards
-4. **LinkedIn** — Share your results using [LINKEDIN_POST.md](LINKEDIN_POST.md)
+3. **Tableau** — Contact repo owner for the Tableau setup guide to build dashboards
+4. **LinkedIn** — Contact repo owner for the ready-to-post article template
 
 ---
 
