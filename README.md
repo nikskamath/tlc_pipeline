@@ -213,8 +213,6 @@ curl -X POST http://localhost:8000/anomaly/score \
 
 - **[snowflake/README.md](snowflake/README.md)** — Detailed Snowflake setup & troubleshooting
 - **[.github/workflows/](./github/workflows/)** — CI/CD workflow definitions
-- **Tableau Setup & LinkedIn Article** — Contact the repo owner for these private guides
-
 ---
 
 ## 🤝 **Contributing**
