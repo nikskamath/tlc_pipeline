@@ -16,6 +16,14 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.utils.trigger_rule import TriggerRule
 
+# Import n8n alert callbacks
+sys.path.insert(0, "/opt/airflow/scripts")
+try:
+    from n8n_alerts import on_dag_success, on_dag_failure
+except ImportError:
+    on_dag_success = None
+    on_dag_failure = None
+
 log = logging.getLogger(__name__)
 
 DBT_PROJECT_DIR = "/opt/airflow/dbt"
@@ -76,6 +84,8 @@ with DAG(
     catchup=False,
     max_active_runs=1,
     tags=["tlc", "snowflake", "dbt", "portfolio"],
+    on_success_callback=on_dag_success,
+    on_failure_callback=on_dag_failure,
 ) as dag:
 
     get_target_month = PythonOperator(task_id="get_target_month", python_callable=_get_target_month)
